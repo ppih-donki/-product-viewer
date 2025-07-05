@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <!-- モバイル対応のための viewport 設定 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>店舗マップビューア</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ツール名ヘッダー -->
+  <div id="header">AI-MAP登録済み商品確認ツール</div>
+
+  <div id="controls">
+    CSV選択: <input id="imageFile" type="file" accept=".csv" />
+    店舗:
+    <select id="storeSelector">
+      <option value="">店舗選択</option>
+    </select>
+    フロア:
+    <select id="floorSelector">
+      <option value="">フロア選択</option>
+    </select>
+    画像種別:
+    <select id="imageTypeSelect">
+      <option value="map">map</option>
+      <option value="cad">cad</option>
+    </select>
+  </div>
+
+  <div id="main">
+    <div id="topSection">
+      <div id="mapContainer"></div>
+      <div id="selectionContainer">
+        <button id="clearAllBtn">全件削除</button>
+        <button id="exportBtn">誤登録商品リストをCSV出力</button>
+        <ul id="selectedList"></ul>
+      </div>
+    </div>
+    <div id="imageContainer"></div>
+  </div>
+
+  <script src="viewer_core.js"></script>
+</body>
+</html>
