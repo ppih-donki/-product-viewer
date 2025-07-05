@@ -5,7 +5,6 @@ let selectedMapType = "map";
 let selectedItems = []; // { shelf_id, jan, productName }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ボタン・ファイル選択・セレクタ類の初期設定
   document.getElementById("exportBtn").addEventListener("click", exportCSV);
   document.getElementById("clearAllBtn").addEventListener("click", () => {
     selectedItems = [];
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (img) renderMarkers(img);
   });
 
-  // ── タッチイベント対応: マップパンニング ──
+  // タッチイベント対応: マップパンニング
   const mapContainer = document.getElementById("mapContainer");
   let isPanning = false, startX = 0, startY = 0, scrollLeft = 0, scrollTop = 0;
   mapContainer.addEventListener("touchstart", e => {
@@ -47,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// CSV 読み込み
 function handleCSVUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -85,7 +83,8 @@ function handleCSVUpload(e) {
 function populateStoreSelect() {
   const sel = document.getElementById("storeSelector");
   sel.innerHTML = "<option value=''>店舗選択</option>";
-  [...new Set(allData.map(d => d.store_id))].forEach(s => sel.append(new Option(s, s)));
+  [...new Set(allData.map(d => d.store_id))]
+    .forEach(s => sel.append(new Option(s, s)));
 }
 
 function handleStoreChange(e) {
@@ -120,10 +119,11 @@ function updateMapImage() {
 }
 
 function renderMarkers(mapImage) {
+  // 既存マーカー削除
   document.querySelectorAll(".marker").forEach(m => m.remove());
+
   const scaleX = mapImage.clientWidth / 150;
   const scaleY = mapImage.clientHeight / 212;
-
   const grouped = {};
   allData
     .filter(d => d.store_id === selectedStore && d.floor === selectedFloor)
@@ -132,13 +132,36 @@ function renderMarkers(mapImage) {
       grouped[d.shelf_id].push(d.jan);
     });
 
+  // 重なり回避用データ
+  const placed = [];
+  function avoidOverlap(x, y, minDist) {
+    placed.forEach(p => {
+      const dx = x - p.x, dy = y - p.y;
+      if (Math.hypot(dx, dy) < minDist) {
+        const angle = Math.random() * 2 * Math.PI;
+        x += Math.cos(angle) * minDist;
+        y += Math.sin(angle) * minDist;
+      }
+    });
+    placed.push({ x, y });
+    return { x, y };
+  }
+
   Object.entries(grouped).forEach(([shelf_id, jans]) => {
     const d0 = allData.find(d => d.shelf_id === shelf_id);
     if (!d0 || isNaN(d0.x) || isNaN(d0.y)) return;
+
+    // 基本座標
+    const rawX = d0.x * scaleX;
+    const rawY = d0.y * scaleY;
+    // 最小距離：マーカー最大直径の半分
+    const minDist = 20;
+    const { x: nx, y: ny } = avoidOverlap(rawX, rawY, minDist);
+
     const m = document.createElement("div");
     m.className = "marker";
-    m.style.left = `${d0.x * scaleX}px`;
-    m.style.top  = `${d0.y * scaleY}px`;
+    m.style.left = `${nx}px`;
+    m.style.top  = `${ny}px`;
     m.textContent = shelf_id.split("_")[2];
     m.dataset.jans    = JSON.stringify(jans);
     m.dataset.shelfId = shelf_id;
@@ -151,20 +174,17 @@ function displayThumbnails(jans, shelf_id) {
   const cont = document.getElementById("imageContainer");
   cont.innerHTML = "";
 
-  // 1行目：指示文
   const instr = document.createElement("div");
   instr.className = "thumbnail-instruction";
   instr.textContent = "削除する誤登録商品をクリックしてください";
   cont.appendChild(instr);
 
-  // 2行目：選択済み番号
   const markerNo = shelf_id.split("_")[2];
   const selDisp = document.createElement("div");
   selDisp.id = "selectedMarkerDisplay";
   selDisp.textContent = `選択済み番号：${markerNo}`;
   cont.appendChild(selDisp);
 
-  // 3行目：サムネイルリスト
   const list = document.createElement("div");
   list.className = "thumb-list";
   jans.forEach(jan => {
