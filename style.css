@@ -1,10 +1,13 @@
 /* ===== モバイルファースト ===== */
 html, body {
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
   height: 100vh;
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
   font-family: sans-serif;
 }
+
 #header {
   flex: 0 0 auto;
   padding: 10px;
@@ -14,6 +17,7 @@ html, body {
   font-weight: bold;
   border-bottom: 1px solid #ccc;
 }
+
 #controls {
   flex: 0 0 auto;
   padding: 10px;
@@ -21,18 +25,21 @@ html, body {
   border-bottom: 1px solid #ddd;
   font-size: 14px;
 }
+
 #main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
+
 #topSection {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
 }
+
 #mapContainer {
   width: 100%;
   height: 50%;
@@ -41,11 +48,13 @@ html, body {
   min-width: 0;
   min-height: 0;
 }
+
 #mapContainer img {
   width: 100%;
   height: auto;
   display: block;
 }
+
 #selectionContainer {
   width: 100%;
   height: 50%;
@@ -57,6 +66,7 @@ html, body {
   min-width: 0;
   min-height: 0;
 }
+
 #selectionContainer button {
   position: sticky;
   top: 0;
@@ -68,16 +78,19 @@ html, body {
   margin-bottom: 4px;
   z-index: 1;
 }
+
 #selectedList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 #selectedList li {
   display: flex;
   align-items: center;
   margin: 4px 0;
 }
+
 #selectedList li button.removeBtn {
   margin-right: 6px;
   background: transparent;
@@ -87,46 +100,55 @@ html, body {
   cursor: pointer;
 }
 
-/* 下部サムネイル */
+/* ===== 下部サムネイル ===== */
 #imageContainer {
   display: flex;
   flex-direction: column;
   padding: 10px;
   background: #fafafa;
-  overflow-x: auto;
+  overflow-x: auto;                      /* 横スクロール許可 */
   overflow-y: hidden;
   gap: 10px;
   flex: 0 0 30%;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;      /* iOS慣性スクロール */
 }
+
 .thumbnail-instruction {
   font-size: calc(12px + 0.5vw);
   margin-bottom: 6px;
 }
+
 #selectedMarkerDisplay {
   font-size: calc(12px + 0.5vw);
   color: red;
   font-weight: bold;
   margin-bottom: 6px;
 }
+
 .thumb-list {
-  display: flex;
+  display: flex;                          /* 横並び */
+  flex-wrap: nowrap;                      /* 折り返し禁止 */
   gap: 10px;
-  overflow-x: auto;
+  overflow-x: auto;                       /* 横スクロール */
+  -webkit-overflow-scrolling: touch;      /* iOS慣性スクロール */
 }
+
 .thumb-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 30vw;
+  flex: 0 0 30vw;                         /* 幅を画面幅の30%に固定 */
   max-width: 120px;
   text-align: center;
   cursor: pointer;
 }
+
 .thumb-box img {
   width: 100%;
   height: auto;
 }
+
 .jan-label {
   font-size: calc(10px + 0.3vw);
   margin-top: 4px;
@@ -135,7 +157,7 @@ html, body {
   line-height: 1.2em;
 }
 
-/* マーカー */
+/* ===== マーカー表示 ===== */
 .marker {
   position: absolute;
   width: 4vw;
