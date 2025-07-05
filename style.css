@@ -106,12 +106,12 @@ html, body {
   flex-direction: column;
   padding: 10px;
   background: #fafafa;
-  overflow-x: auto;                      /* 横スクロール許可 */
+  overflow-x: auto;                      
   overflow-y: hidden;
   gap: 10px;
   flex: 0 0 30%;
   min-height: 0;
-  -webkit-overflow-scrolling: touch;      /* iOS慣性スクロール */
+  -webkit-overflow-scrolling: touch;      
 }
 
 .thumbnail-instruction {
@@ -126,19 +126,20 @@ html, body {
   margin-bottom: 6px;
 }
 
+/* サムネイル横スクロールを強制 */
 .thumb-list {
-  display: flex;                          /* 横並び */
-  flex-wrap: nowrap;                      /* 折り返し禁止 */
+  display: flex;                          
+  flex-wrap: nowrap;                      
   gap: 10px;
-  overflow-x: auto;                       /* 横スクロール */
-  -webkit-overflow-scrolling: touch;      /* iOS慣性スクロール */
+  overflow-x: auto;                       
+  -webkit-overflow-scrolling: touch;      
 }
 
 .thumb-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 0 0 30vw;                         /* 幅を画面幅の30%に固定 */
+  flex: 0 0 30vw;                         
   max-width: 120px;
   text-align: center;
   cursor: pointer;
@@ -157,22 +158,31 @@ html, body {
   line-height: 1.2em;
 }
 
-/* ===== マーカー表示 ===== */
+/* ===== マーカー表示（自動縮小＋重なり軽減） ===== */
 .marker {
   position: absolute;
-  width: 4vw;
-  height: 4vw;
-  max-width: 20px;
-  max-height: 20px;
+  /* 12px〜20pxの間で4vwを基準に自動調整 */
+  width: clamp(12px, 4vw, 20px);
+  height: clamp(12px, 4vw, 20px);
   background: red;
   color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2vw;
+  /* 8px〜14pxの間で2vwを基準に自動調整 */
+  font-size: clamp(8px, 2vw, 14px);
   cursor: pointer;
   user-select: none;
+}
+
+/* 小さな画面向けにさらに縮小 */
+@media (max-width: 480px) {
+  .marker {
+    width: clamp(10px, 3vw, 16px);
+    height: clamp(10px, 3vw, 16px);
+    font-size: clamp(6px, 1.5vw, 10px);
+  }
 }
 
 /* ===== タブレット以上（480px〜） ===== */
