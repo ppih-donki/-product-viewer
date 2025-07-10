@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>棚ID・JANコードスキャナー</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    #video { width: 100%; max-height: 50vh; background: #000; display: none; }
+    button { margin: 0.5rem 0; padding: 0.5rem 1rem; font-size: 1rem; }
+    #janList { margin-top: 1rem; list-style-type: none; padding: 0; }
+    #janList li { margin-bottom: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>棚ID・JANコードスキャナー</h1>
+  <button id="scanShelfBtn">棚ID読み込み用カメラを起動</button>
+  <p>棚ID: <span id="shelfIdDisplay">未設定</span></p>
+  <button id="scanJanBtn">JANコード読み込み用カメラを起動</button>
+  <ul id="janList"></ul>
+  <button id="uploadBtn">アップロード</button>
+  <video id="video" autoplay muted></video>
+  <script>
+    const scanShelfBtn = document.getElementById('scanShelfBtn');
+    const scanJanBtn = document.getElementById('scanJanBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const shelfIdDisplay = document.getElementById('shelfIdDisplay');
+    const janListElem = document.getElementById('janList');
+    const video = document.getElementById('video');
+    let shelfId = '';
+    const janCodes = [];
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        await new Promise(resolve => (video.onloadedmetadata = resolve));
+        return stream;
+      } catch (err) {
+        alert('カメラ起動に失敗しました: ' + err);
+        throw err;
+      }
+    }
+
+    function stopCamera(stream) {
+      stream.getTracks().forEach(track => track.stop());
+      video.srcObject = null;
+      video.style.display = 'none';
+    }
+
+    async function scanCode(formats) {
+      if (!('BarcodeDetector' in window)) {
+        alert('Barcode Detector API 非対応のブラウザです');
+        return null;
+      }
+      const detector = new BarcodeDetector({ formats });
+      const stream = await startCamera();
+      try {
+        // 少し待ってから検出
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const detections = await detector.detect(video);
+        if (detections.length > 0) {
+          return detections[0].rawValue;
+        } else {
+          alert('コードが検出できませんでした');
+          return null;
+        }
+      } finally {
+        stopCamera(stream);
+      }
+    }
+
+    scanShelfBtn.addEventListener('click', async () => {
+      const result = await scanCode(['qr_code']);
+      if (result) {
+        shelfId = result;
+        shelfIdDisplay.textContent = shelfId;
+      }
+    });
+
+    scanJanBtn.addEventListener('click', async () => {
+      const result = await scanCode(['ean_13', 'ean_8']);
+      if (result) {
+        janCodes.push(result);
+        const li = document.createElement('li');
+        li.textContent = result;
+        janListElem.appendChild(li);
+      }
+    });
+
+    uploadBtn.addEventListener('click', () => {
+      const data = { shelfId, janCodes };
+      const json = JSON.stringify(data, null, 2);
+      navigator.clipboard.writeText(json)
+        .then(() => alert('JSONをクリップボードにコピーしました:\n' + json))
+        .catch(err => alert('クリップボードへのコピーに失敗しました: ' + err));
+    });
+  </script>
+</body>
+</html>
