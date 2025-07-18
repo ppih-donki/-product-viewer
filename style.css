@@ -1,13 +1,11 @@
-/* ===== モバイルファースト ===== */
+/* 全体 */
 html, body {
-  margin: 0;
-  padding: 0;
   height: 100vh;
+  margin: 0;
   display: flex;
   flex-direction: column;
   font-family: sans-serif;
 }
-
 #header {
   flex: 0 0 auto;
   padding: 10px;
@@ -17,15 +15,12 @@ html, body {
   font-weight: bold;
   border-bottom: 1px solid #ccc;
 }
-
 #controls {
   flex: 0 0 auto;
   padding: 10px;
   background: #fff;
   border-bottom: 1px solid #ddd;
-  font-size: 14px;
 }
-
 #main {
   flex: 1;
   display: flex;
@@ -33,31 +28,26 @@ html, body {
   min-height: 0;
 }
 
+/* 上部65% */
 #topSection {
+  flex: 0 0 65%;
   display: flex;
-  flex-direction: column;
-  flex: 1;
   min-height: 0;
 }
-
 #mapContainer {
-  width: 100%;
-  height: 50%;
+  flex: 0 0 60%;
   position: relative;
   overflow: auto;
   min-width: 0;
   min-height: 0;
 }
-
 #mapContainer img {
   width: 100%;
   height: auto;
   display: block;
 }
-
 #selectionContainer {
-  width: 100%;
-  height: 50%;
+  flex: 0 0 40%;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -66,7 +56,6 @@ html, body {
   min-width: 0;
   min-height: 0;
 }
-
 #selectionContainer button {
   position: sticky;
   top: 0;
@@ -78,19 +67,16 @@ html, body {
   margin-bottom: 4px;
   z-index: 1;
 }
-
 #selectedList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 #selectedList li {
   display: flex;
   align-items: center;
   margin: 4px 0;
 }
-
 #selectedList li button.removeBtn {
   margin-right: 6px;
   background: transparent;
@@ -100,113 +86,69 @@ html, body {
   cursor: pointer;
 }
 
-/* ===== 下部サムネイル ===== */
+/* 下部35%：サムネイル */
 #imageContainer {
+  flex: 0 0 35%;
   display: flex;
-  flex-direction: column;
-  padding: 10px;
-  background: #fafafa;
-  overflow-x: auto;                      
+  flex-direction: column;    /* 縦方向に並べる */
+  overflow-x: auto;
   overflow-y: hidden;
   gap: 10px;
-  flex: 0 0 30%;
+  padding: 10px;
+  background: #fafafa;
   min-height: 0;
-  -webkit-overflow-scrolling: touch;      
+  position: relative;
 }
-
+/* １行目：指示文 */
 .thumbnail-instruction {
-  font-size: calc(12px + 0.5vw);
+  font-size: 14px;
   margin-bottom: 6px;
 }
-
+/* ２行目：選択中番号 */
 #selectedMarkerDisplay {
-  font-size: calc(12px + 0.5vw);
+  font-size: 14px;
   color: red;
   font-weight: bold;
   margin-bottom: 6px;
 }
-
-/* サムネイル横スクロールを強制 */
+/* ３行目：横並びのサムネリスト */
 .thumb-list {
-  display: flex;                          
-  flex-wrap: nowrap;                      
+  display: flex;
   gap: 10px;
-  overflow-x: auto;                       
-  -webkit-overflow-scrolling: touch;      
+  overflow-x: auto;
 }
-
 .thumb-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 0 0 30vw;                         
-  max-width: 120px;
+  width: 120px;
   text-align: center;
   cursor: pointer;
 }
-
 .thumb-box img {
-  width: 100%;
+  width: 100px;
   height: auto;
 }
-
 .jan-label {
-  font-size: calc(10px + 0.3vw);
+  font-size: 12px;
   margin-top: 4px;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.2em;
 }
 
-/* ===== マーカー表示（自動縮小＋重なり軽減） ===== */
+/* マーカー縮小 */
 .marker {
   position: absolute;
-  /* 12px〜20pxの間で4vwを基準に自動調整 */
-  width: clamp(12px, 4vw, 20px);
-  height: clamp(12px, 4vw, 20px);
+  width: 14px;
+  height: 14px;
   background: red;
   color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 8px〜14pxの間で2vwを基準に自動調整 */
-  font-size: clamp(8px, 2vw, 14px);
+  font-size: 8px;
   cursor: pointer;
   user-select: none;
-}
-
-/* 小さな画面向けにさらに縮小 */
-@media (max-width: 480px) {
-  .marker {
-    width: clamp(10px, 3vw, 16px);
-    height: clamp(10px, 3vw, 16px);
-    font-size: clamp(6px, 1.5vw, 10px);
-  }
-}
-
-/* ===== タブレット以上（480px〜） ===== */
-@media (min-width: 480px) {
-  #topSection {
-    flex-direction: row;
-    flex: 0 0 65%;
-  }
-  #mapContainer {
-    flex: 6;
-    height: auto;
-  }
-  #selectionContainer {
-    flex: 4;
-    height: auto;
-  }
-  #imageContainer {
-    flex: 0 0 35%;
-  }
-}
-
-/* ===== デスクトップ以上（768px〜） ===== */
-@media (min-width: 768px) {
-  #controls {
-    font-size: 16px;
-  }
 }
